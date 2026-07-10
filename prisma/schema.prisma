@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum CardGenre {
+  LANDSCAPE // 풍경 사진
+  PORTRAIT // 인물 사진
+  TRAVEL // 여행 사진
+  ANIMAL // 동물 사진
+  OBJECT // 사물 사진
+  ETC // 기타
+}
+
+enum CardGrade {
+  COMMON // 일반 등급
+  RARE // 희귀 등급
+  SUPER_RARE // 초희귀 등급
+  LEGENDARY // 전설 등급 (최상위)
+}
+
+enum ListingStatus {
+  ON_SALE // 판매중
+  SOLD_OUT // 품절
+  CANCELLED // 판매 취소
+}
+
+enum ExchangeStatus {
+  PENDING // 대기 중
+  ACCEPTED // 승인됨
+  REJECTED // 거절됨
+  CANCELLED // 제안 취소
+}
+
+enum NotiType {
+  EXCHANGE_RECEIVED // 교환 제안 도착
+  EXCHANGE_ACCEPTED // 교환 승인
+  EXCHANGE_REJECTED // 교환 거절
+  PURCHASE_COMPLETED // 구매 완료
+  CARD_SOLD // 내 카드 판매됨
+  CARD_SOLD_OUT // 내 판매 카드 품절
+}
+
+// ==================== MODELS ====================
+
+model User {
+  id               String    @id @default(uuid())
+  email            String    @unique @db.VarChar(255)
+  nickname         String    @db.VarChar(255)
+  password         String    @db.VarChar(255)
+  points           Int       @default(0) // 포인트 잔액
+  lastBoxClaimedAt DateTime? // 랜덤박스 쿨다운 체크용, 첫 가입자에게 바로 포인트 지급 위해
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  photocards    Photocard[] // 생성한 포토카드
+  ownerships    Ownership[] // 보유 카드
+  shopListings  ShopListing[] // 등록한 판매 리스팅
+  exchanges     Exchange[] // 제안한 교환
+  notifications Notification[] // 받은 알림
+}
+
+model Photocard {
+  id            String    @id @default(uuid())
+  description   String    @db.Text // 카드설명
+  name          String    @db.VarChar(255) // 카드이름
+  imageUrl      String    @db.VarChar(500)
+  genre         CardGenre
+  grade         CardGrade
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  minPrice      Int // 생성시 지정 최소판매가격
+  totalQuantity Int // 총 발행량 (최대 10장)
+
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id])
+
+  ownerships Ownership[]
+  exchanges  Exchange[]
+}
+
+model Ownership {
+  id       String @id @default(uuid())
+  quantity Int    @default(0) // 미판매 보유 수량
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  photocardId String
+  photocard   Photocard @relation(fields: [photocardId], references: [id])
+
+  shopListings ShopListing[] // 이 보유 카드로 등록한 판매 리스팅들
+
+  @@unique([userId, photocardId]) // 유저-카드 조합 유일성 보장
+}
+
+model ShopListing {
+  id                String        @id @default(uuid())
+  quantity          Int // 판매 등록 수량
+  remainingQuantity Int // 남은 수량, 0이면 솔드아웃
+  pricePerUnit      Int // 장당 판매 가격
+  wishGrade         CardGrade? // 교환희망 등급 (optional)
+  wishGenre         CardGenre? // 교환희망 장르 (optional)
+  status            ListingStatus @default(ON_SALE)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id]) // 판매자
+
+  ownershipId String
+  ownership   Ownership @relation(fields: [ownershipId], references: [id]) // 등록에 사용된 카드
+
+  exchanges Exchange[]
+}
+
+model Exchange {
+  id              String         @id @default(uuid())
+  offeredQuantity Int            @default(1) // 교환 제안 수량
+  status          ExchangeStatus @default(PENDING)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  shopListingId String
+  shopListing   ShopListing @relation(fields: [shopListingId], references: [id]) // 교환 대상 리스팅
+
+  proposerId String
+  proposer   User   @relation(fields: [proposerId], references: [id]) // 교환 제안자
+
+  photocardId String
+  photocard   Photocard @relation(fields: [photocardId], references: [id]) // 제시된 카드종류
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  type      NotiType
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  message   String   @db.VarChar(255)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // FK relation 없음 - noti_type에 따라 Exchange.id 또는 ShopListing.id를 가리키는 범용 참조
+  // 애플리케이션 레벨에서 noti_type으로 분기해서 대상 테이블을 조회해야 함
+  targetId String
+}
