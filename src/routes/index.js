@@ -1,1 +1,3 @@
-// 삭제 후 작업 해주세용
+import photocardRouter from "../modules/photocard/photocard.route.js";
+
+router.use("/photocards", photocardRouter);
