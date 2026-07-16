@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-// import routes from "./routes/index.js";
+import routes from "./routes/index.js";
 
 import { notFoundMiddleware } from "./common/middleware/notFound.middleware.js";
 import { errorMiddleware } from "./common/middleware/error.middleware.js";

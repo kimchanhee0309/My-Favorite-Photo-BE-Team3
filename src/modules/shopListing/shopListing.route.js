@@ -1,6 +1,7 @@
 import express from "express";
 
 import * as shopListingController from "./shopListing.controller.js";
+import * as exchangeController from "../exchange/exchange.controller.js";
 import { asyncHandler } from "../../common/utils/asyncHandler.js";
 import { authMiddleware } from "../../common/middleware/auth.middleware.js";
 import {
@@ -16,6 +17,8 @@ import {
   shopListingIdParamSchema,
   updateShopListingBodySchema,
 } from "./shopListing.validator";
+
+import { createExchangeBodySchema } from "../exchange/exchange.validator.js";
 
 const router = express.Router();
 
@@ -66,6 +69,14 @@ router.post(
   validateParams(shopListingIdParamSchema),
   validateBody(purchaseShopListingBodySchema),
   asyncHandler(shopListingController.purchaseShopListing),
+);
+
+router.post(
+  "/:shopListingId/exchanges",
+  authMiddleware,
+  validateParams(shopListingIdParamSchema),
+  validateBody(createExchangeBodySchema),
+  asyncHandler(exchangeController.createExchange),
 );
 
 router.get(
