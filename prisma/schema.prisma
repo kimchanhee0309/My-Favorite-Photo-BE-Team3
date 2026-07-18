@@ -142,6 +142,8 @@ model Exchange {
 
   photocardId String
   photocard   Photocard @relation(fields: [photocardId], references: [id]) // 제시된 카드종류
+
+  message String?
 }
 
 model Notification {
