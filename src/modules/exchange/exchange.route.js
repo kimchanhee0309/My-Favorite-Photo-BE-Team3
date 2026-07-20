@@ -29,6 +29,13 @@ router.get(
 );
 
 router.patch(
+  "/:exchangeId/accept",
+  authMiddleware,
+  validateParams(exchangeIdParamSchema),
+  asyncHandler(exchangeController.acceptExchange),
+);
+
+router.patch(
   "/:exchangeId/reject",
   authMiddleware,
   validateParams(exchangeIdParamSchema),

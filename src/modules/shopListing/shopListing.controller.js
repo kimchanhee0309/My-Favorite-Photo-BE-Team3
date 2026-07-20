@@ -1,8 +1,8 @@
 import * as shopListingService from "./shopListing.service.js";
-import { successResponse } from "../../common/response/successResponse";
+import { successResponse } from "../../common/response/successResponse.js";
 
 export async function getShopListings(req, res) {
-  const result = await shopListingService.getShopListings(req, query);
+  const result = await shopListingService.getShopListings(req.bodyquery);
 
   return successResponse(res, result, "판매글 목록 조회 성공");
 }
@@ -13,7 +13,7 @@ export async function getMyShopListings(req, res) {
     req.query,
   );
 
-  return successResponse(req, result, "나의 판매글 목록 조회 성공");
+  return successResponse(res, result, "나의 판매글 목록 조회 성공");
 }
 
 export async function createShopListing(req, res) {
@@ -22,7 +22,7 @@ export async function createShopListing(req, res) {
     req.body,
   );
 
-  return successResponse(req, result, "판매글 등록 성공", 201);
+  return successResponse(res, result, "판매글 등록 성공", 201);
 }
 
 export async function getShopListing(req, res) {

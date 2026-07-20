@@ -36,7 +36,7 @@ export const createShopListingBodySchema = z.object({
 });
 
 export const updateShopListingBodySchema = z.object({
-  priePerUnit: z.coerce.number().int().positive().optional(),
+  pricePerUnit: z.coerce.number().int().positive().optional(),
   wishGrade: cardGradeSchema.optional(),
   wishGenre: cardGenreSchema.optional(),
   wishDescription: z.string().trim().max(1000).optional(),

@@ -16,7 +16,7 @@ import {
   purchaseShopListingBodySchema,
   shopListingIdParamSchema,
   updateShopListingBodySchema,
-} from "./shopListing.validator";
+} from "./shopListing.validator.js";
 
 import { createExchangeBodySchema } from "../exchange/exchange.validator.js";
 
@@ -45,7 +45,7 @@ router.post(
 router.get(
   "/:shopListingId",
   validateParams(shopListingIdParamSchema),
-  asyncHandler(shopListingController.getshopListing),
+  asyncHandler(shopListingController.getShopListing),
 );
 
 router.patch(
