@@ -91,7 +91,7 @@ export async function updateExchange(exchangeId, data, client = prisma) {
 export async function decreaseOwnershipQuantity(
   ownershipId,
   quantity,
-  client = prisnma,
+  client = prisma,
 ) {
   return client.ownership.update({
     where: { id: ownershipId },

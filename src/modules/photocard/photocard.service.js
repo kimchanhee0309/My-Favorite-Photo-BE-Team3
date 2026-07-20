@@ -82,7 +82,7 @@ export async function createPhotocard(userId, data) {
       );
     }
 
-    const photocard = await photocard.createPhotocard(
+    const photocard = await photocardRepository.createPhotocard(
       {
         name: data.name,
         description: data.description,

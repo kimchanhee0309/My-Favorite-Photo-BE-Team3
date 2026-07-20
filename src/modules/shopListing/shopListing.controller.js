@@ -2,7 +2,7 @@ import * as shopListingService from "./shopListing.service.js";
 import { successResponse } from "../../common/response/successResponse.js";
 
 export async function getShopListings(req, res) {
-  const result = await shopListingService.getShopListings(req.bodyquery);
+  const result = await shopListingService.getShopListings(req.query);
 
   return successResponse(res, result, "판매글 목록 조회 성공");
 }
