@@ -2,7 +2,7 @@ import * as ownershipRepository from "./ownership.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
 
-function encodeCursor(cursorDate) {
+function encodeCursor(cursorData) {
   return Buffer.from(JSON.stringify(cursorData)).toString("base64");
 }
 

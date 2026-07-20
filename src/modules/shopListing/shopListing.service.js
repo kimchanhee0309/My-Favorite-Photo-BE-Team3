@@ -425,7 +425,7 @@ export async function purchaseShopListing(buyerId, shopListingId, quantity) {
     const buyer = await shopListingRepository.findUserById(buyerId, tx);
     const totalPrice = shopListing.pricePerUnit * quantity;
 
-    if (!buyer || buyer.points < totalPRice) {
+    if (!buyer || buyer.points < totalPrice) {
       throw new AppError(
         "포인트가 부족합니다.",
         400,
@@ -519,5 +519,5 @@ export async function getShopListingExchanges(userId, shopListingId) {
   const items =
     await shopListingRepository.findShopListingExchanges(shopListingId);
 
-  return { tiems };
+  return { items };
 }

@@ -25,7 +25,11 @@ export const createPhotocardBodySchema = z.object({
   totalQuantity: z.coerce.number().int().min(1).max(10),
 });
 
-export const getMyPhotocardQuerySchema = z.object({
+export const getMyPhotocardsQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(50).optional(),
   cursor: z.string().optional(),
+  grade: cardGradeSchema.optional(),
+  genre: cardGenreSchema.optional(),
+  search: z.string().trim().min(1).max(100).optional(),
+  orderBy: z.enum(["latest", "oldest", "price_asc", "price_desc"]).optional(),
 });

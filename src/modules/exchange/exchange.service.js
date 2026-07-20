@@ -123,13 +123,14 @@ export async function createExchange(proposerId, shopListingId, data) {
     proposerId,
     photocardId: data.photocardId,
     offeredQuantity: data.offeredQuantity,
+    message: data.message,
   });
 
   await exchangeRepository.createNotification({
     type: "EXCHANGE_RECEIVED",
     userId: shopListing.userId,
     targetId: exchange.id,
-    message: `${proposerOwnership.photocardId.name} 카드로 교환 제안이 도착했습니다.`,
+    message: `${proposerOwnership.photocard.name} 카드로 교환 제안이 도착했습니다.`,
   });
 
   return exchange;
@@ -299,7 +300,7 @@ export async function acceptExchange(sellerId, exchangeId) {
         {
           type: "CARD_SOLD_OUT",
           userId: sellerId,
-          targetId: shopListingId.id,
+          targetId: shopListing.id,
           message: `${shopListing.ownership.photocard.name} 판매글이 품절되었습니다.`,
         },
         tx,

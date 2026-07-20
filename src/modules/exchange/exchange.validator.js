@@ -12,6 +12,7 @@ export const exchangeIdParamSchema = z.object({
 export const createExchangeBodySchema = z.object({
   photocardId: z.string().uuid(),
   offeredQuantity: z.coerce.number().int().positive().default(1),
+  message: z.string().trim().max(1000).optional(),
 });
 
 export const getExchangesQuerySchema = z.object({

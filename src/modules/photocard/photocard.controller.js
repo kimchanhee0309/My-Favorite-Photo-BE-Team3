@@ -8,7 +8,7 @@ export async function createPhotocard(req, res) {
 }
 
 export async function getMyPhotocards(req, res) {
-  const result = await photocardService(req.user.id, req.query);
+  const result = await photocardService.getMyPhotocards(req.user.id, req.query);
 
   return successResponse(res, result, "내가 생성한 포토카드 목록 조회 성공");
 }

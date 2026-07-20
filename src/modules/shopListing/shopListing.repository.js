@@ -31,7 +31,7 @@ export async function findShopListings(
 }
 
 export async function findShopListingById(shopListingId, client = prisma) {
-  return client.shopListing.fundUnique({
+  return client.shopListing.findUnique({
     where: { id: shopListingId },
     include: {
       ...includeDetail,
