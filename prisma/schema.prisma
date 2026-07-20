@@ -128,11 +128,10 @@ model ShopListing {
 }
 
 model Exchange {
-  id              String         @id @default(uuid())
-  offeredQuantity Int            @default(1) // 교환 제안 수량
-  status          ExchangeStatus @default(PENDING)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id        String         @id @default(uuid())
+  status    ExchangeStatus @default(PENDING)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 
   shopListingId String
   shopListing   ShopListing @relation(fields: [shopListingId], references: [id]) // 교환 대상 리스팅
