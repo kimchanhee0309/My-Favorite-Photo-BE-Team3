@@ -3,15 +3,11 @@ import express from "express";
 import * as photocardController from "./photocard.controller.js";
 import { authMiddleware } from "../../common/middleware/auth.middleware.js";
 import { asyncHandler } from "../../common/utils/asyncHandler.js";
+import { validate } from "../../common/middleware/validate.middleware.js";
 import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../../common/middleware/validate.middleware.js";
-import {
-  createPhotocardBodySchema,
-  getMyPhotocardsQuerySchema,
-  photocardIdParamSchema,
+  createPhotocardSchema,
+  getMyPhotocardsSchema,
+  getPhotocardSchema,
 } from "./photocard.validator.js";
 
 const router = express.Router();
@@ -19,20 +15,20 @@ const router = express.Router();
 router.post(
   "/",
   authMiddleware,
-  validateBody(createPhotocardBodySchema),
+  validate(createPhotocardSchema),
   asyncHandler(photocardController.createPhotocard),
 );
 
 router.get(
   "/me",
   authMiddleware,
-  validateQuery(getMyPhotocardsQuerySchema),
+  validate(getMyPhotocardsSchema),
   asyncHandler(photocardController.getMyPhotocards),
 );
 
 router.get(
   "/:photocardId",
-  validateParams(photocardIdParamSchema),
+  validate(getPhotocardSchema),
   asyncHandler(photocardController.getPhotocard),
 );
 
