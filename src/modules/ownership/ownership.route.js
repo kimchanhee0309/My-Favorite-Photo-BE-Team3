@@ -3,13 +3,10 @@ import express from "express";
 import * as ownershipController from "./ownership.controller.js";
 import { authMiddleware } from "../../common/middleware/auth.middleware.js";
 import { asyncHandler } from "../../common/utils/asyncHandler.js";
+import { validate } from "../../common/middleware/validate.middleware.js";
 import {
-  validateParams,
-  validateQuery,
-} from "../../common/middleware/validate.middleware.js";
-import {
-  getMyOwnershipsQuerySchema,
-  ownershipIdParamSchema,
+  getMyOwnershipsSchema,
+  getOwnershipSchema,
 } from "./ownership.validator.js";
 
 const router = express.Router();
@@ -17,14 +14,14 @@ const router = express.Router();
 router.get(
   "/me",
   authMiddleware,
-  validateQuery(getMyOwnershipsQuerySchema),
+  validate(getMyOwnershipsSchema),
   asyncHandler(ownershipController.getMyOwnerships),
 );
 
 router.get(
   "/:ownershipId",
   authMiddleware,
-  validateParams(ownershipIdParamSchema),
+  validate(getOwnershipSchema),
   asyncHandler(ownershipController.getOwnership),
 );
 
