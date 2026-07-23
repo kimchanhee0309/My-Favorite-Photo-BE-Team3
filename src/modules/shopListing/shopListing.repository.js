@@ -16,6 +16,7 @@ const includeDetail = {
 
 export async function getAllShopListings() {
   return prisma.shopListing.findMany({
+    where: { status: { not: "CANCELLED" } },
     include: { ownership: { include: { photocard: true } } },
   });
 }
