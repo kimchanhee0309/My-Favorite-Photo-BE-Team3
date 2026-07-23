@@ -25,9 +25,9 @@ export const validate = (schema) => {
         req.body = validatedData.body;
       }
 
-      if (validatedData.query) {
+      /* if (validatedData.query) {
         req.query = validatedData.query;
-      }
+      } */
 
       if (validatedData.params) {
         req.params = validatedData.params;
