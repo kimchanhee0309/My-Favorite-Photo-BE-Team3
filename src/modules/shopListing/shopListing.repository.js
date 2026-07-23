@@ -14,6 +14,12 @@ const includeDetail = {
   },
 };
 
+export async function getAllShopListings() {
+  return prisma.shopListing.findMany({
+    include: { ownership: { include: { photocard: true } } },
+  });
+}
+
 export async function countShopListings(where, client = prisma) {
   return client.shopListing.count({ where });
 }

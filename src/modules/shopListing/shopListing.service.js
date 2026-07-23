@@ -214,6 +214,28 @@ export async function getShopListings(query) {
   };
 }
 
+export async function getShopListingsAllforCount() {
+  const items = await shopListingRepository.getAllShopListings();
+  console.dir(items, { depth: null });
+
+  const counts = items.reduce(
+    (acc, item) => {
+      const { grade, genre } = item.ownership.photocard;
+      const status = item.status;
+
+      acc.grade[grade] = acc.grade[grade] ? acc.grade[grade] + 1 : 1;
+      acc.genre[genre] = acc.genre[genre] ? acc.genre[genre] + 1 : 1;
+      acc.status[status] = acc.status[status] ? acc.status[status] + 1 : 1;
+      return acc;
+    },
+    { grade: {}, genre: {}, status: {} },
+  );
+  return {
+    total: items.length,
+    ...counts,
+  };
+}
+
 export async function getMyShopListings(userId, query) {
   const limit = getInfiniteScrollLimit(query);
 

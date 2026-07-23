@@ -7,6 +7,12 @@ export async function getShopListings(req, res) {
   return successResponse(res, result, "판매글 목록 조회 성공");
 }
 
+export async function getShopListingsAllforCount(req, res) {
+  const result = await shopListingService.getShopListingsAllforCount();
+
+  return successResponse(res, result, "전체 판매글 옵션 개수 조회 성공");
+}
+
 export async function getMyShopListings(req, res) {
   const result = await shopListingService.getMyShopListings(
     req.user.id,
