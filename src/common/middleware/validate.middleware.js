@@ -12,11 +12,27 @@ const formatZodError = (error) => {
     .join(", ");
 };
 
-const validate = (target, schema) => {
+export const validate = (schema) => {
   return (req, res, next) => {
     try {
-      const validatedData = schema.parse(req[target]);
-      req[target] = validatedData;
+      const validatedData = schema.parse({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+      });
+
+      if (validatedData.body) {
+        req.body = validatedData.body;
+      }
+
+      /* if (validatedData.query) {
+        req.query = validatedData.query;
+      } */
+
+      if (validatedData.params) {
+        req.params = validatedData.params;
+      }
+
       next();
     } catch (error) {
       if (error instanceof ZodError) {
@@ -29,7 +45,3 @@ const validate = (target, schema) => {
     }
   };
 };
-
-export const validateBody = (schema) => validate("body", schema);
-export const validateQuery = (schema) => validate("query", schema);
-export const validateParams = (schema) => validate("params", schema);
