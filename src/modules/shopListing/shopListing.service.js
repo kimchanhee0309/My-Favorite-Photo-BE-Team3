@@ -216,7 +216,6 @@ export async function getShopListings(query) {
 
 export async function getShopListingsAllforCount() {
   const items = await shopListingRepository.getAllShopListings();
-  console.dir(items, { depth: null });
 
   const counts = items.reduce(
     (acc, item) => {
