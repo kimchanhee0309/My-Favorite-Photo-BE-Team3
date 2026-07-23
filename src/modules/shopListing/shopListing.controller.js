@@ -10,7 +10,11 @@ export async function getShopListings(req, res) {
 export async function getShopListingsAllforCount(req, res) {
   const result = await shopListingService.getShopListingsAllforCount();
 
-  return successResponse(res, result, "전체 판매글 옵션 개수 조회 성공");
+  return successResponse(
+    res,
+    result,
+    "마켓플레이스 페이지 옵션 개수 조회 성공",
+  );
 }
 
 export async function getMyShopListings(req, res) {
