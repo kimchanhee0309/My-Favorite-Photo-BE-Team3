@@ -10,7 +10,7 @@ export const swaggerSpec = {
   servers: [
     {
       url: "http://localhost:3001/api",
-      description: "Local sever",
+      description: "Local server",
     },
   ],
   tags: [
@@ -168,6 +168,19 @@ export const swaggerSpec = {
           message: { type: "string", example: "교환 제안이 도착했습니다." },
           targetId: { type: "string", example: "exchange_id" },
           createdAt: { type: "string", format: "date-time" },
+        },
+      },
+      NotificationListData: {
+        type: "object",
+        properties: {
+          notifications: {
+            type: "array",
+            items: { $ref: "#/components/schemas/Notification" },
+          },
+          total: { type: "integer", example: 42 },
+          page: { type: "integer", example: 1 },
+          pageSize: { type: "integer", example: 20 },
+          totalPages: { type: "integer", example: 3 },
         },
       },
     },
@@ -520,7 +533,7 @@ export const swaggerSpec = {
             schema: { type: "string" },
           },
         ],
-        requsetBody: {
+        requestBody: {
           content: {
             "application/json": {
               schema: {
@@ -589,7 +602,7 @@ export const swaggerSpec = {
           content: {
             "application/json": {
               schema: {
-                type: "objet",
+                type: "object",
                 required: ["quantity"],
                 properties: {
                   quantity: { type: "integer", example: 2 },
@@ -693,7 +706,7 @@ export const swaggerSpec = {
           {
             name: "exchangeId",
             in: "path",
-            reauired: true,
+            required: true,
             schema: { type: "string" },
           },
         ],
@@ -764,7 +777,26 @@ export const swaggerSpec = {
           },
         ],
         responses: {
-          200: { description: "조회 성공" },
+          200: {
+            description: "조회 성공",
+            content: {
+              "application/json": {
+                schema: {
+                  allOf: [
+                    { $ref: "#/components/schemas/SuccessResponse" },
+                    {
+                      type: "object",
+                      properties: {
+                        data: {
+                          $ref: "#/components/schemas/NotificationListData",
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -783,7 +815,26 @@ export const swaggerSpec = {
           },
         ],
         responses: {
-          200: { description: "읽음 처리 성공" },
+          200: {
+            description: "읽음 처리 성공",
+            content: {
+              "application/json": {
+                schema: {
+                  allOf: [
+                    { $ref: "#/components/schemas/SuccessResponse" },
+                    {
+                      type: "object",
+                      properties: {
+                        data: { $ref: "#/components/schemas/Notification" },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          404: { description: "해당 알림을 찾을 수 없음" },
+          403: { description: "본인의 알림만 읽음 처리 가능" },
         },
       },
     },
@@ -794,7 +845,29 @@ export const swaggerSpec = {
         summary: "전체 알림 읽음 처리",
         security: [{ bearerAuth: [] }],
         responses: {
-          200: { description: "전체 읽음 처리 성공" },
+          200: {
+            description: "전체 읽음 처리 성공",
+            content: {
+              "application/json": {
+                schema: {
+                  allOf: [
+                    { $ref: "#/components/schemas/SuccessResponse" },
+                    {
+                      type: "object",
+                      properties: {
+                        data: {
+                          type: "object",
+                          properties: {
+                            count: { type: "integer", example: 3 },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
         },
       },
     },
