@@ -1,6 +1,6 @@
 import * as notificationRepository from "./notification.repository.js";
-import { AppError } from "../../common/errors/AppError";
-import { ERROR_CODE } from "../../common/errors/errorCode";
+import { AppError } from "../../common/errors/AppError.js";
+import { ERROR_CODE } from "../../common/errors/errorCode.js";
 
 export async function getNotifications(userId, page, pageSize, isRead) {
   const notifications = await notificationRepository.findNotifications({
