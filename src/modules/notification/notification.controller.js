@@ -5,11 +5,13 @@ export async function getNotifications(req, res) {
   const userId = req.user.id;
   const { page, pageSize, isRead } = req.query;
 
+  const parsedIsRead = isRead === undefined ? undefined : isRead === "true";
+
   const notifications = await notificationService.getNotifications(
     userId,
     page,
     pageSize,
-    isRead,
+    parsedIsRead,
   );
 
   return successResponse(res, notifications, "알림 목록 조회 성공");

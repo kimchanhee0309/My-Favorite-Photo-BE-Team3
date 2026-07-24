@@ -4,10 +4,7 @@ export const getNotificationSchema = z.object({
   query: z.object({
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().max(50).default(20),
-    isRead: z
-      .enum(["true", "false"])
-      .optional()
-      .transform((val) => (val === undefined ? undefined : val === "true")),
+    isRead: z.enum(["true", "false"]).optional(),
   }),
 });
 
