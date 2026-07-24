@@ -19,6 +19,12 @@ router.get(
 );
 
 router.get(
+  "/me/count",
+  authMiddleware,
+  asyncHandler(ownershipController.getMyOwnershipsAllforCount),
+);
+
+router.get(
   "/:ownershipId",
   authMiddleware,
   validate(getOwnershipSchema),

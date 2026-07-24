@@ -122,6 +122,26 @@ export async function getMyOwnerships(userId, query) {
   };
 }
 
+export async function getMyOwnershipsAllforCount(userId) {
+  const items = await ownershipRepository.getMyOwnershipsAll(userId);
+
+  const counts = items.reduce(
+    (acc, item) => {
+      const { grade, genre } = item.photocard;
+
+      acc.grade[grade] = acc.grade[grade] ? acc.grade[grade] + 1 : 1;
+      acc.genre[genre] = acc.genre[genre] ? acc.genre[genre] + 1 : 1;
+
+      return acc;
+    },
+    { grade: {}, genre: {} },
+  );
+  return {
+    total: items.length,
+    ...counts,
+  };
+}
+
 export async function getOwnership(userId, ownershipId) {
   const ownership = await ownershipRepository.findOwnershipById(ownershipId);
 
