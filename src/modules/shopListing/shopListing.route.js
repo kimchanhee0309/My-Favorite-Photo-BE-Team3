@@ -33,6 +33,11 @@ router.get(
   asyncHandler(shopListingController.getMyShopListings),
 );
 
+router.get(
+  "/count",
+  asyncHandler(shopListingController.getShopListingsAllforCount),
+);
+
 router.post(
   "/",
   authMiddleware,
