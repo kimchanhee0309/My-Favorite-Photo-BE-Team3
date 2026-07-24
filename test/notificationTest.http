@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:3001
+
+# 변수 설정 
+@sellerToken = Bearer 
+@proposerToken = Bearer 
+@shopListingId = 
+@cardBId = 
+@notificationId = 
+@exchangeId = 
+
+### ==========================================
+### 1단계: 제안자(Proposer)가 교환 제안 보내기
+### (이때 판매자에게 'EXCHANGE_RECEIVED' 알림이 자동 생성됩니다!)
+### ==========================================
+POST {{baseUrl}}/shop-listings/{{shopListingId}}/exchanges
+Authorization: {{proposerToken}}
+Content-Type: application/json
+
+{
+  "photocardId": "{{cardBId}}",
+  "offeredQuantity": 1,
+  "message": "이 카드랑 교환하고 싶어요!"
+}
+
+### ==========================================
+### 2단계: 판매자(Seller)가 알림 목록 조회하기
+### (방금 도착한 교환 제안 알림이 있는지 확인!)
+### ==========================================
+GET {{baseUrl}}/notifications
+Authorization: {{sellerToken}}
+
+### ==========================================
+### 3단계: 판매자(Seller)가 안 읽은 알림만 필터링해서 조회하기
+### ==========================================
+GET {{baseUrl}}/notifications?isRead=false
+Authorization: {{sellerToken}}
+
+### ==========================================
+### 4단계: 판매자(Seller)가 단일 알림 읽음 처리하기
+### ==========================================
+PATCH {{baseUrl}}/notifications/{{notificationId}}/read
+Authorization: {{sellerToken}}
+
+### ==========================================
+### 5단계: 판매자(Seller)가 교환 제안 승인하기
+### (이때 제안자에게 승인 알림, 판매자에게 품절 알림이 동시 생성됩니다!)
+### ==========================================
+PATCH {{baseUrl}}/exchanges/{{exchangeId}}/accept
+Authorization: {{sellerToken}}
+
+### ==========================================
+### 6단계: 제안자(Proposer)가 전체 알림 읽음 처리하기
+### ==========================================
+PATCH {{baseUrl}}/notifications/read-all
+Authorization: {{proposerToken}}
