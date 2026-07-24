@@ -36,14 +36,25 @@ export async function findNotifications(
   const take = Number(pageSize) > 0 ? Number(pageSize) : 20;
   const skip = (currentPage - 1) * take;
 
-  return client.notification.findMany({
-    where,
-    orderBy: {
-      createdAt: "desc",
-    },
-    skip,
-    take,
-  });
+  const [notifications, total] = await Promise.all([
+    client.notification.findMany({
+      where,
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take,
+    }),
+    client.notification.count({ where }),
+  ]);
+
+  return {
+    notifications,
+    total,
+    page: currentPage,
+    pageSize: take,
+    totalPages: Math.ceil(total / take),
+  };
 }
 
 export async function findNotificationById(id, client = prisma) {
