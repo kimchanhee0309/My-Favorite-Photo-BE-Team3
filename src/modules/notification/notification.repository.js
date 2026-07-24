@@ -32,13 +32,17 @@ export async function findNotifications(
     where.isRead = isRead;
   }
 
+  const currentPage = Number(page) > 0 ? Number(page) : 1;
+  const take = Number(pageSize) > 0 ? Number(pageSize) : 20;
+  const skip = (currentPage - 1) * take;
+
   return client.notification.findMany({
     where,
     orderBy: {
       createdAt: "desc",
     },
-    skip: (page - 1) * pageSize,
-    take: pageSize,
+    skip,
+    take,
   });
 }
 
