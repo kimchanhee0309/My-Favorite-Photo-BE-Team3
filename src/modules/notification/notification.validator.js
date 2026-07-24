@@ -13,6 +13,8 @@ export const getNotificationSchema = z.object({
 
 export const readNotificationSchema = z.object({
   params: z.object({
-    id: z.string().uuid({ message: "유효하지 않은 알림 ID 형식입니다." }),
+    notificationId: z
+      .string()
+      .uuid({ message: "유효하지 않은 알림 ID 형식입니다." }),
   }),
 });

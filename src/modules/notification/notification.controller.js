@@ -17,7 +17,7 @@ export async function getNotifications(req, res) {
 
 export async function readNotification(req, res) {
   const userId = req.user.id;
-  const notificationId = req.params.id;
+  const notificationId = req.params.notificationId;
 
   const updatedNotification = await notificationService.readNotification(
     userId,
