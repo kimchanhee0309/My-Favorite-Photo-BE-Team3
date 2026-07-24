@@ -11,12 +11,19 @@ export async function signup({ email, nickname, password }) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await authRepository.createUser({
-    email,
-    nickname,
-    password: hashedPassword,
-  });
+  try {
+    const newUser = await authRepository.createUser({
+      email,
+      nickname,
+      password: hashedPassword,
+    });
 
-  const { password: _, ...userWithoutPassword } = newUser;
-  return userWithoutPassword;
+    const { password: _, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
+  } catch (error) {
+    if (error.code === "P2002") {
+      throw new AppError("이미 존재하는 이메일이거나 닉네임입니다.", 409, ERROR_CODE.CONFLICT);
+    }
+    throw error;
+  }
 }
