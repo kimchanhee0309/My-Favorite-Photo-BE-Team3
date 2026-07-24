@@ -21,3 +21,43 @@ export async function createNotification(data, client = prisma) {
     },
   });
 }
+
+export async function findNotifications(
+  { userId, page, pageSize, isRead },
+  client = prisma,
+) {
+  const where = { userId };
+
+  if (isRead !== undefined) {
+    where.isRead = isRead;
+  }
+
+  return client.notification.findMany({
+    where,
+    orderBy: {
+      createdAt: "desc",
+    },
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+}
+
+export async function findNotificationById(id, client = prisma) {
+  return client.notification.findUnique({
+    where: { id },
+  });
+}
+
+export async function markAsRead(id, client = prisma) {
+  return client.notification.update({
+    where: { id },
+    data: { isRead: true },
+  });
+}
+
+export async function markAllAsRead(userId, client = prisma) {
+  return client.notification.updateMany({
+    where: { userId, isRead: false },
+    data: { isRead: true },
+  });
+}
