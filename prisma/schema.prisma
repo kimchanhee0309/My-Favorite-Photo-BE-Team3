@@ -58,7 +58,7 @@ enum NotiType {
 model User {
   id               String    @id @default(uuid())
   email            String    @unique @db.VarChar(255)
-  nickname         String    @db.VarChar(255)
+  nickname         String    @unique @db.VarChar(255)
   password         String    @db.VarChar(255)
   points           Int       @default(0) // 포인트 잔액
   lastBoxClaimedAt DateTime? // 랜덤박스 쿨다운 체크용, 첫 가입자에게 바로 포인트 지급 위해
