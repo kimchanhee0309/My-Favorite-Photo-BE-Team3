@@ -41,7 +41,5 @@ export async function readNotification(userId, notificationId) {
 }
 
 export async function readAllNotifications(userId) {
-  const notification = await notificationRepository.markAllAsRead(userId);
-
-  return { message: "모든 알림이 읽음 처리되었습니다" };
+  return await notificationRepository.markAllAsRead(userId);
 }
