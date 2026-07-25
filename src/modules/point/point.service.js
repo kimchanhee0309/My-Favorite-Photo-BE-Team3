@@ -1,5 +1,6 @@
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
+import { COOLDOWN_MS, MAX_POINT, MIN_POINT } from "./constant.js";
 import * as pointRepository from "./point.repository.js";
 
 export async function getUserPointInfo(userId) {
@@ -17,40 +18,39 @@ export async function getUserPointInfo(userId) {
 }
 
 export async function claimRandomBox(userId) {
-  const user = await pointRepository.findPointById(userId);
+  const now = new Date();
+  const cooldownThreshold = new Date(now.getTime() - COOLDOWN_MS);
 
-  if (!user) {
+  const acquiredPoint = Math.floor(
+    Math.random() * (MAX_POINT - MIN_POINT + 1) + MIN_POINT,
+  );
+
+  const result = await pointRepository.updateUserPointsAndBoxTime(
+    userId,
+    acquiredPoint,
+    cooldownThreshold,
+    now,
+  );
+
+  if (result.count === 0) {
+    const user = await pointRepository.findPointById(userId);
+
+    if (!user) {
+      throw new AppError(
+        "해당 유저를 찾을 수 없습니다.",
+        404,
+        ERROR_CODE.NOT_FOUND,
+      );
+    }
+
     throw new AppError(
-      "해당 유저를 찾을 수 없습니다.",
-      404,
-      ERROR_CODE.NOT_FOUND,
+      "아직 1시간이 지나지 않았습니다.",
+      400,
+      ERROR_CODE.BAD_REQUEST,
     );
   }
 
-  if (user.lastBoxClaimedAt) {
-    const now = new Date();
-    const timeGap = now - new Date(user.lastBoxClaimedAt);
-    const COOLDOWN_MS = 60 * 60 * 1000;
-
-    if (timeGap < COOLDOWN_MS) {
-      throw new AppError(
-        "아직 1시간이 지나지 않았습니다.",
-        400,
-        ERROR_CODE.BAD_REQUEST,
-      );
-    }
-  }
-
-  const minPoint = 100;
-  const maxPoint = 3000;
-  const acquiredPoint = Math.floor(
-    Math.random() * (maxPoint - minPoint + 1) + minPoint,
-  );
-
-  const updatedUser = await pointRepository.updateUserPointsAndBoxTime(
-    userId,
-    acquiredPoint,
-  );
+  const updatedUser = await pointRepository.findPointById(userId);
 
   return {
     acquiredPoint,

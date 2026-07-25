@@ -15,18 +15,22 @@ export async function findPointById(userId, client = prisma) {
 export async function updateUserPointsAndBoxTime(
   userId,
   acquiredPoint,
+  cooldownThreshold,
+  now,
   client = prisma,
 ) {
-  return client.user.update({
-    where: { id: userId },
+  return client.user.updateMany({
+    where: {
+      id: userId,
+      OR: [
+        { lastBoxClaimedAt: null },
+        { lastBoxClaimedAt: { lte: cooldownThreshold } },
+      ],
+    },
+
     data: {
       points: { increment: acquiredPoint },
-      lastBoxClaimedAt: new Date(),
-    },
-    select: {
-      id: true,
-      points: true,
-      lastBoxClaimedAt: true,
+      lastBoxClaimedAt: now,
     },
   });
 }
