@@ -28,6 +28,18 @@ function createShopListingWhere(query, userId) {
 
   if (userId) {
     where.userId = userId;
+    if (query.saleType === "EXCHANGE") {
+      where.status = "ON_SALE";
+      where.exchanges = {
+        some: { status: "PENDING" },
+      };
+    }
+    if (query.saleType === "SALE") {
+      where.status = "ON_SALE";
+      where.exchanges = {
+        none: { status: "PENDING" },
+      };
+    }
   }
 
   if (query.status) {
