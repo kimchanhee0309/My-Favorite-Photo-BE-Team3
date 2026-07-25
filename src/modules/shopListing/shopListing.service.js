@@ -247,6 +247,18 @@ export async function getShopListingsAllforCount() {
   };
 }
 
+function getSaleType(item) {
+  if (item.status === "SOLD_OUT") {
+    return "SOLD_OUT";
+  }
+
+  if (item.exchanges.some((exchange) => exchange.status === "PENDING")) {
+    return "EXCHANGE";
+  }
+
+  return "SALE";
+}
+
 export async function getMyShopListings(userId, query) {
   const limit = getInfiniteScrollLimit(query);
 
@@ -259,14 +271,20 @@ export async function getMyShopListings(userId, query) {
     where,
     orderBy,
     take: limit + 1,
+    includeExchanges: true,
   });
 
   const hasNextPage = items.length > limit;
   const slicedItems = hasNextPage ? items.slice(0, limit) : items;
   const lastItem = slicedItems[slicedItems.length - 1];
 
+  const itemsWithSaleType = slicedItems.map(({ exchanges, ...item }) => ({
+    ...item,
+    saleType: getSaleType({ status: item.status, exchanges }),
+  }));
+
   return {
-    items: slicedItems,
+    items: itemsWithSaleType,
     nextCursor: hasNextPage ? createNextCursor(lastItem, query.sort) : null,
     hasNextPage,
   };
