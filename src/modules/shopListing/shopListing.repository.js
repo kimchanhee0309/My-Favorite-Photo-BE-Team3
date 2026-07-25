@@ -21,6 +21,13 @@ export async function getAllShopListings() {
   });
 }
 
+export async function getAllMyShopListings(userId) {
+  return prisma.shopListing.findMany({
+    where: { userId, status: { not: "CANCELLED" } },
+    include: { ownership: { include: { photocard: true } }, exchanges: true },
+  });
+}
+
 export async function countShopListings(where, client = prisma) {
   return client.shopListing.count({ where });
 }
