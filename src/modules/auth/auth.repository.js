@@ -11,3 +11,9 @@ export async function createUser(data, client = prisma) {
     data,
   });
 }
+
+export async function findUserById(id, client = prisma) {
+  return client.user.findUnique({
+    where: { id },
+  });
+}
