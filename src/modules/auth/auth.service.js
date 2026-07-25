@@ -50,3 +50,15 @@ export async function login({ email, password }) {
   
   return { user: userWithoutPassword, token };
 }
+
+export async function getMe(userId) {
+  const user = await authRepository.findUserById(userId);
+  
+  if (!user) {
+    throw new AppError("유저 정보를 찾을 수 없습니다.", 404, ERROR_CODE.NOT_FOUND);
+  }
+
+  const { password: _, ...userWithoutPassword } = user;
+  
+  return userWithoutPassword;
+}
