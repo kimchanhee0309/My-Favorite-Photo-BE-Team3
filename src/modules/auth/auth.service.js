@@ -1,9 +1,8 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import * as authRepository from "./auth.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
-import { id } from "zod/locales";
+import { signAccessToken } from "../../lib/jwt.js";
 
 export async function signup({ email, nickname, password }) {
   const existingUser = await authRepository.findUserByEmail(email);
@@ -41,11 +40,11 @@ export async function login({ email, password }) {
     throw new AppError("이메일 또는 비밀번호가 일치하지 않습니다.", 401, ERROR_CODE.UNAUTHORIZED);
   }
 
-  const token = jwt.sign(
-    { id: user.id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_SECRET_IN || "7d" }
-  );
+  const token = signAccessToken({
+    id: user.id,
+    email: user.email,
+    nickname: user.nickname,
+  });
 
   const { password: _, ...userWithoutPassword } = user;
   
