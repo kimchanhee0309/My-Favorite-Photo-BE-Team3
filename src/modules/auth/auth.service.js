@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import * as authRepository from "./auth.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
+import { signAccessToken } from "../../lib/jwt.js";
 
 export async function signup({ email, nickname, password }) {
   const existingUser = await authRepository.findUserByEmail(email);
@@ -26,4 +27,26 @@ export async function signup({ email, nickname, password }) {
     }
     throw error;
   }
+}
+
+export async function login({ email, password }) {
+  const user = await authRepository.findUserByEmail(email);
+  if (!user) {
+    throw new AppError("이메일 또는 비밀번호가 일치하지 않습니다.", 401, ERROR_CODE.UNAUTHORIZED);
+  }
+
+  const isValidPassword = await bcrypt.compare(password, user.password);
+  if (!isValidPassword) {
+    throw new AppError("이메일 또는 비밀번호가 일치하지 않습니다.", 401, ERROR_CODE.UNAUTHORIZED);
+  }
+
+  const token = signAccessToken({
+    id: user.id,
+    email: user.email,
+    nickname: user.nickname,
+  });
+
+  const { password: _, ...userWithoutPassword } = user;
+  
+  return { user: userWithoutPassword, token };
 }

@@ -6,3 +6,18 @@ export async function signup(req, res) {
 
   return successResponse(res, result, "회원가입 성공", 201);
 }
+
+export async function login(req, res) {
+  const { user, token } = await authService.login(req.body);
+
+  const isProduction = process.env.NODE_ENV === "production";
+
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  return successResponse(res, user, "로그인 성공", 200);
+}
