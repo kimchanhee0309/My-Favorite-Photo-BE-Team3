@@ -31,6 +31,18 @@ export async function findMyOwnerships(
   });
 }
 
+export async function getMyOwnershipsAll(userId) {
+  return prisma.ownership.findMany({
+    where: {
+      userId,
+      quantity: {
+        gt: 0,
+      },
+    },
+    include: { photocard: true },
+  });
+}
+
 export async function findOwnershipById(ownershipId, client = prisma) {
   return client.ownership.findUnique({
     where: {
