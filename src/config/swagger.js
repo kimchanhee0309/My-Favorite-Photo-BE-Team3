@@ -137,7 +137,6 @@ export const swaggerSpec = {
         type: "object",
         properties: {
           id: { type: "string", example: "exchange_id" },
-          offeredQuantity: { type: "integer", example: 1 },
           status: {
             type: "string",
             enum: ["PENDING", "ACCEPTED", "REJECTED", "CANCELLED"],
@@ -669,7 +668,6 @@ export const swaggerSpec = {
                     type: "string",
                     example: "offered_photocard_id",
                   },
-                  offeredQuantity: { type: "integer", example: 1 },
                 },
               },
             },

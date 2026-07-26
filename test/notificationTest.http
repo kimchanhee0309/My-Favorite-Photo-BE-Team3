@@ -18,7 +18,6 @@ Content-Type: application/json
 
 {
   "photocardId": "{{cardBId}}",
-  "offeredQuantity": 1,
   "message": "이 카드랑 교환하고 싶어요!"
 }
 

@@ -102,7 +102,7 @@ export async function createExchange(proposerId, shopListingId, data) {
       data.photocardId,
     );
 
-  if (!proposerOwnership || proposerOwnership.quantity < data.offeredQuantity) {
+  if (!proposerOwnership || proposerOwnership.quantity < 1) {
     throw new AppError(
       "교환 제안할 카드 보유 수량이 부족합니다.",
       400,
@@ -122,7 +122,6 @@ export async function createExchange(proposerId, shopListingId, data) {
     shopListingId,
     proposerId,
     photocardId: data.photocardId,
-    offeredQuantity: data.offeredQuantity,
     message: data.message,
   });
 
@@ -231,10 +230,7 @@ export async function acceptExchange(sellerId, exchangeId) {
         tx,
       );
 
-    if (
-      !proposerOwnership ||
-      proposerOwnership.quantity < exchange.offeredQuantity
-    ) {
+    if (!proposerOwnership || proposerOwnership.quantity < 1) {
       throw new AppError(
         "제안자의 카드 보유 수량이 부족합니다.",
         400,
@@ -244,7 +240,6 @@ export async function acceptExchange(sellerId, exchangeId) {
 
     await exchangeRepository.decreaseOwnershipQuantity(
       proposerOwnership.id,
-      exchange.offeredQuantity,
       tx,
     );
 
@@ -252,7 +247,7 @@ export async function acceptExchange(sellerId, exchangeId) {
       {
         userId: sellerId,
         photocardId: exchange.photocardId,
-        quantity: exchange.offeredQuantity,
+        quantity: 1,
       },
       tx,
     );
