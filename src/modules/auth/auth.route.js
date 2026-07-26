@@ -25,4 +25,10 @@ router.get(
   authController.getMe
 );
 
+router.post(
+  "/logout",
+  authMiddleware,
+  authController.logout
+);
+
 export default router;
