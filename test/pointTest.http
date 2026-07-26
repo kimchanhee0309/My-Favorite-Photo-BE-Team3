@@ -1,0 +1,61 @@
+### 변수 설정
+@baseUrl = http://localhost:3001
+@accessToken = 로그인 후 붙여넣기
+
+### ===================================================
+### 0. (선택) 로그인해서 토큰 발급 받기
+### ===================================================
+### 0.1 회원가입
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "nickname": "테스터2",
+  "password": "password123!",
+  "passwordConfirm": "password123!"
+}
+
+
+### 0.2 로그인
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123!"
+}
+
+
+### ===================================================
+### 1. 내 포인트 잔액 및 쿨타임 정보 조회
+### ===================================================
+GET {{baseUrl}}/points/me
+Authorization: Bearer {{accessToken}}
+
+
+### ===================================================
+### 2. 랜덤 포인트 상자 뽑기 (최초 1회 성공 테스트)
+### ===================================================
+POST {{baseUrl}}/points/random-box
+Authorization: Bearer {{accessToken}}
+
+
+### ===================================================
+### 3. 랜덤 포인트 상자 연속 뽑기 시도 (1시간 쿨타임 차단 에러 테스트)
+### ===================================================
+POST {{baseUrl}}/points/random-box
+Authorization: Bearer {{accessToken}}
+
+
+### ===================================================
+### 4. 획득 후 내 포인트 잔액 재조회 (DB 반영 검증)
+### ===================================================
+GET {{baseUrl}}/points/me
+Authorization: Bearer {{accessToken}}
+
+### ===================================================
+### 5. 쿨다운 이후 랜덤 포인트 상자 뽑기 (서비스 함수에서 임의로 쿨다운 감소 설정 후)
+### ===================================================
+POST {{baseUrl}}/points/random-box
+Authorization: Bearer {{accessToken}}

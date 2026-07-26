@@ -28,6 +28,18 @@ function createShopListingWhere(query, userId) {
 
   if (userId) {
     where.userId = userId;
+    if (query.saleType === "EXCHANGE") {
+      where.status = "ON_SALE";
+      where.exchanges = {
+        some: { status: "PENDING" },
+      };
+    }
+    if (query.saleType === "SALE") {
+      where.status = "ON_SALE";
+      where.exchanges = {
+        none: { status: "PENDING" },
+      };
+    }
   }
 
   if (query.status) {
@@ -235,6 +247,18 @@ export async function getShopListingsAllforCount() {
   };
 }
 
+function getSaleType(item) {
+  if (item.status === "SOLD_OUT") {
+    return "SOLD_OUT";
+  }
+
+  if (item.exchanges.some((exchange) => exchange.status === "PENDING")) {
+    return "EXCHANGE";
+  }
+
+  return "SALE";
+}
+
 export async function getMyShopListings(userId, query) {
   const limit = getInfiniteScrollLimit(query);
 
@@ -247,16 +271,56 @@ export async function getMyShopListings(userId, query) {
     where,
     orderBy,
     take: limit + 1,
+    includeExchanges: true,
   });
 
   const hasNextPage = items.length > limit;
   const slicedItems = hasNextPage ? items.slice(0, limit) : items;
   const lastItem = slicedItems[slicedItems.length - 1];
 
+  const itemsWithSaleType = slicedItems.map(({ exchanges, ...item }) => ({
+    ...item,
+    saleType: getSaleType({ status: item.status, exchanges }),
+  }));
+
   return {
-    items: slicedItems,
+    items: itemsWithSaleType,
     nextCursor: hasNextPage ? createNextCursor(lastItem, query.sort) : null,
     hasNextPage,
+  };
+}
+
+export async function getMyShopListingsAllforCount(userId) {
+  const items = await shopListingRepository.getAllMyShopListings(userId);
+
+  const counts = items.reduce(
+    (acc, item) => {
+      const { grade, genre } = item.ownership.photocard;
+      const status = item.status;
+      let saleType;
+      if (status === "SOLD_OUT") {
+        saleType = "SOLD_OUT";
+      } else if (
+        item.exchanges.some((exchange) => exchange.status === "PENDING")
+      ) {
+        saleType = "EXCHANGE";
+      } else {
+        saleType = "SALE";
+      }
+
+      acc.grade[grade] = (acc.grade[grade] || 0) + 1;
+      acc.genre[genre] = (acc.genre[genre] || 0) + 1;
+      acc.status[status] = (acc.status[status] || 0) + 1;
+      acc.saleType[saleType] = (acc.saleType[saleType] || 0) + 1;
+
+      return acc;
+    },
+    { grade: {}, genre: {}, saleType: {}, status: {} },
+  );
+
+  return {
+    total: items.length,
+    ...counts,
   };
 }
 

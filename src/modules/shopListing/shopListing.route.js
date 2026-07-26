@@ -27,6 +27,11 @@ router.get(
 );
 
 router.get(
+  "/count",
+  asyncHandler(shopListingController.getShopListingsAllforCount),
+);
+
+router.get(
   "/me",
   authMiddleware,
   validate(getShopListingsSchema),
@@ -34,8 +39,9 @@ router.get(
 );
 
 router.get(
-  "/count",
-  asyncHandler(shopListingController.getShopListingsAllforCount),
+  "/me/count",
+  authMiddleware,
+  asyncHandler(shopListingController.getMyShopListingsAllforCount),
 );
 
 router.post(
