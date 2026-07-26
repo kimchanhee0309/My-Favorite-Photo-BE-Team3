@@ -33,14 +33,14 @@ export async function countShopListings(where, client = prisma) {
 }
 
 export async function findShopListings(
-  { where, orderBy, take },
+  { where, orderBy, take, includeExchanges = false },
   client = prisma,
 ) {
   return client.shopListing.findMany({
     where,
     orderBy,
     take,
-    include: includeDetail,
+    include: { ...includeDetail, ...(includeExchanges && { exchanges: true }) },
   });
 }
 

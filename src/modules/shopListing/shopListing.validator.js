@@ -20,6 +20,7 @@ export const getShopListingsSchema = z.object({
     grade: cardGradeSchema.optional(),
     genre: cardGenreSchema.optional(),
     status: listingStatusSchema.optional(),
+    saleType: z.enum(["SALE", "EXCHANGE"]).optional(),
     sort: z.enum(["latest", "oldest", "price_asc", "price_desc"]).optional(),
   }),
 });
