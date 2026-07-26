@@ -21,3 +21,9 @@ export async function login(req, res) {
 
   return successResponse(res, user, "로그인 성공", 200);
 }
+
+export async function getMe(req, res) {
+  const user = await authService.getMe(req.user.id);
+
+  return successResponse(res, user, "내 정보 조회 성공", 200);
+}
