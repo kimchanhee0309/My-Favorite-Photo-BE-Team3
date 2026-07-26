@@ -13,7 +13,6 @@ export const createExchangeSchema = z.object({
   }),
   body: z.object({
     photocardId: z.string().uuid(),
-    offeredQuantity: z.coerce.number().int().positive().default(1),
     message: z.string().trim().max(1000).optional(),
   }),
 });
