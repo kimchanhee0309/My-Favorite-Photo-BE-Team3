@@ -183,6 +183,32 @@ export const swaggerSpec = {
           totalPages: { type: "integer", example: 3 },
         },
       },
+      PointInfo: {
+        type: "object",
+        properties: {
+          id: { type: "string", example: "user_id" },
+          nickname: { type: "string", example: "우디" },
+          points: { type: "integer", example: 1540 },
+          lastBoxClaimedAt: {
+            type: "string",
+            format: "date-time",
+            nullable: true,
+            example: "2026-07-26T10:00:00.000Z",
+          },
+        },
+      },
+      RandomBoxResult: {
+        type: "object",
+        properties: {
+          acquiredPoint: { type: "integer", example: 850 },
+          totalPoints: { type: "integer", example: 2390 },
+          lastBoxClaimedAt: {
+            type: "string",
+            format: "date-time",
+            example: "2026-07-26T10:00:00.000Z",
+          },
+        },
+      },
     },
   },
   paths: {
@@ -741,7 +767,32 @@ export const swaggerSpec = {
         summary: "내 포인트 조회",
         security: [{ bearerAuth: [] }],
         responses: {
-          200: { description: "조회 성공" },
+          200: {
+            description: "포인트 조회 성공",
+            content: {
+              "application/json": {
+                schema: {
+                  allOf: [
+                    { $ref: "#/components/schemas/SuccessResponse" },
+                    {
+                      type: "object",
+                      properties: {
+                        data: { $ref: "#/components/schemas/PointInfo" },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          404: {
+            description: "해당 유저를 찾을 수 없음",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
         },
       },
     },
@@ -750,10 +801,44 @@ export const swaggerSpec = {
       post: {
         tags: ["Points"],
         summary: "랜덤 포인트 획득",
+        description:
+          "1시간 쿨다운 이후 랜덤 포인트(100~3000)를 지급합니다. 신규 가입 유저는 쿨다운 없이 즉시 1회 획득 가능합니다.",
         security: [{ bearerAuth: [] }],
         responses: {
-          200: { description: "랜덤 포인트 획득 성공" },
-          400: { description: "1시간 쿨타임 미충족" },
+          200: {
+            description: "랜덤 포인트 획득 성공",
+            content: {
+              "application/json": {
+                schema: {
+                  allOf: [
+                    { $ref: "#/components/schemas/SuccessResponse" },
+                    {
+                      type: "object",
+                      properties: {
+                        data: { $ref: "#/components/schemas/RandomBoxResult" },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          400: {
+            description: "1시간 쿨다운 미충족",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+          404: {
+            description: "해당 유저를 찾을 수 없음",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
         },
       },
     },
