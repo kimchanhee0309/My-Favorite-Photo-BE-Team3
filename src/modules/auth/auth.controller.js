@@ -27,3 +27,15 @@ export async function getMe(req, res) {
 
   return successResponse(res, user, "내 정보 조회 성공", 200);
 }
+
+export async function logout(req, res) {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "strict",
+  });
+
+  return successResponse(res, null, "로그아웃 성공", 200);
+}
