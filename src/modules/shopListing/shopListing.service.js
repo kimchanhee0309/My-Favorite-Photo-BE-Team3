@@ -260,6 +260,40 @@ export async function getMyShopListings(userId, query) {
   };
 }
 
+export async function getMyShopListingsAllforCount(userId) {
+  const items = await shopListingRepository.getAllMyShopListings(userId);
+
+  const counts = items.reduce(
+    (acc, item) => {
+      const { grade, genre } = item.ownership.photocard;
+      const status = item.status;
+      let saleType;
+      if (status === "SOLD_OUT") {
+        saleType = "SOLD_OUT";
+      } else if (
+        item.exchanges.some((exchange) => exchange.status === "PENDING")
+      ) {
+        saleType = "EXCHANGE";
+      } else {
+        saleType = "SALE";
+      }
+
+      acc.grade[grade] = (acc.grade[grade] || 0) + 1;
+      acc.genre[genre] = (acc.genre[genre] || 0) + 1;
+      acc.status[status] = (acc.status[status] || 0) + 1;
+      acc.saleType[saleType] = (acc.saleType[saleType] || 0) + 1;
+
+      return acc;
+    },
+    { grade: {}, genre: {}, saleType: {}, status: {} },
+  );
+
+  return {
+    total: items.length,
+    ...counts,
+  };
+}
+
 export async function createShopListing(userId, data) {
   return prisma.$transaction(async (tx) => {
     const ownership = await shopListingRepository.findOwnershipById(

@@ -26,6 +26,18 @@ export async function getMyShopListings(req, res) {
   return successResponse(res, result, "나의 판매글 목록 조회 성공");
 }
 
+export async function getMyShopListingsAllforCount(req, res) {
+  const result = await shopListingService.getMyShopListingsAllforCount(
+    req.user.id,
+  );
+
+  return successResponse(
+    res,
+    result,
+    "나의 판매 포토카드 페이지 옵션 개수 조회 성공",
+  );
+}
+
 export async function createShopListing(req, res) {
   const result = await shopListingService.createShopListing(
     req.user.id,
