@@ -4,7 +4,6 @@ import {
   getNotificationSchema,
   readNotificationSchema,
 } from "./notification.validator.js";
-import { asyncHandler } from "../../common/utils/asyncHandler.js";
 import * as notificationController from "./notification.controller.js";
 import { authMiddleware } from "../../common/middleware/auth.middleware.js";
 

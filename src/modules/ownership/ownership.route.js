@@ -2,7 +2,6 @@ import express from "express";
 
 import * as ownershipController from "./ownership.controller.js";
 import { authMiddleware } from "../../common/middleware/auth.middleware.js";
-import { asyncHandler } from "../../common/utils/asyncHandler.js";
 import { validate } from "../../common/middleware/validate.middleware.js";
 import {
   getMyOwnershipsSchema,
