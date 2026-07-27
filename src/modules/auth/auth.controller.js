@@ -41,7 +41,7 @@ export async function logout(req, res) {
 }
 
 export function googleLogin(req, res) {
-  const redirectUri = "http://localhost:3001/auth/google/callback";
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI;
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`;
   
@@ -49,8 +49,12 @@ export function googleLogin(req, res) {
 }
 
 export async function googleCallback(req, res) {
-  const { code } = req.query;
+  const { code, error } = req.query;
   
+  if (error || !code) {
+    return res.redirect("http://localhost:3000/login?error=google_cancelled");
+  }
+
   const { token } = await authService.googleCallback(code);
 
   const isProduction = process.env.NODE_ENV === "production";
