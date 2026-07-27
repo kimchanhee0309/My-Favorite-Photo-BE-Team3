@@ -248,16 +248,34 @@ export async function getShopListingsAllforCount() {
   };
 }
 
-function getSaleType(item) {
-  if (item.status === "SOLD_OUT") {
-    return "SOLD_OUT";
+function splitListingBySaleType(item) {
+  const { exchanges, ...rest } = item;
+  const pendingCount = exchanges.filter(
+    (exchange) => exchange.status === "PENDING",
+  ).length;
+
+  if (item.status !== "ON_SALE" || pendingCount === 0) {
+    return [
+      {
+        ...rest,
+        saleType: item.status === "ON_SALE" ? "SALE" : item.status,
+      },
+    ];
   }
 
-  if (item.exchanges.some((exchange) => exchange.status === "PENDING")) {
-    return "EXCHANGE";
-  }
-
-  return "SALE";
+  return [
+    {
+      ...rest,
+      id: `${item.id}-sale`,
+      saleType: "SALE",
+    },
+    {
+      ...rest,
+      id: `${item.id}-exchange`,
+      saleType: "EXCHANGE",
+      remainingQuantity: pendingCount,
+    },
+  ];
 }
 
 export async function getMyShopListings(userId, query) {
@@ -279,10 +297,9 @@ export async function getMyShopListings(userId, query) {
   const slicedItems = hasNextPage ? items.slice(0, limit) : items;
   const lastItem = slicedItems[slicedItems.length - 1];
 
-  const itemsWithSaleType = slicedItems.map(({ exchanges, ...item }) => ({
-    ...item,
-    saleType: getSaleType({ status: item.status, exchanges }),
-  }));
+  const itemsWithSaleType = slicedItems
+    .flatMap((item) => splitListingBySaleType(item))
+    .filter((item) => !query.saleType || item.saleType === query.saleType);
 
   return {
     items: itemsWithSaleType,
