@@ -39,3 +39,28 @@ export async function logout(req, res) {
 
   return successResponse(res, null, "로그아웃 성공", 200);
 }
+
+export function googleLogin(req, res) {
+  const redirectUri = "http://localhost:3001/auth/google/callback";
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`;
+  
+  res.redirect(url);
+}
+
+export async function googleCallback(req, res) {
+  const { code } = req.query;
+  
+  const { token } = await authService.googleCallback(code);
+
+  const isProduction = process.env.NODE_ENV === "production";
+
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.redirect("http://localhost:3000/"); 
+}
