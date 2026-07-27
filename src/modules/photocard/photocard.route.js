@@ -2,7 +2,6 @@ import express from "express";
 
 import * as photocardController from "./photocard.controller.js";
 import { authMiddleware } from "../../common/middleware/auth.middleware.js";
-import { asyncHandler } from "../../common/utils/asyncHandler.js";
 import { validate } from "../../common/middleware/validate.middleware.js";
 import {
   createPhotocardSchema,
