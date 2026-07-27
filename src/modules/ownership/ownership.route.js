@@ -15,20 +15,20 @@ router.get(
   "/me",
   authMiddleware,
   validate(getMyOwnershipsSchema),
-  asyncHandler(ownershipController.getMyOwnerships),
+  ownershipController.getMyOwnerships,
 );
 
 router.get(
   "/me/count",
   authMiddleware,
-  asyncHandler(ownershipController.getMyOwnershipsAllforCount),
+  ownershipController.getMyOwnershipsAllforCount,
 );
 
 router.get(
   "/:ownershipId",
   authMiddleware,
   validate(getOwnershipSchema),
-  asyncHandler(ownershipController.getOwnership),
+  ownershipController.getOwnership,
 );
 
 export default router;

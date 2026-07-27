@@ -11,26 +11,39 @@ import {
 
 const router = express.Router();
 
-router.get("/sent", authMiddleware, validate(getExchangesSchema));
+router.get(
+  "/sent",
+  authMiddleware,
+  validate(getExchangesSchema),
+  exchangeController.getSentExchanges,
+);
 
-router.get("/received", authMiddleware, validate(getExchangesSchema));
+router.get(
+  "/received",
+  authMiddleware,
+  validate(getExchangesSchema),
+  exchangeController.getReceivedExchanges,
+);
 
 router.patch(
   "/:exchangeId/accept",
   authMiddleware,
   validate(updateExchangeStatusSchema),
+  exchangeController.acceptExchange,
 );
 
 router.patch(
   "/:exchangeId/reject",
   authMiddleware,
   validate(updateExchangeStatusSchema),
+  exchangeController.rejectExchange,
 );
 
 router.patch(
   "/:exchangeId/cancel",
   authMiddleware,
   validate(updateExchangeStatusSchema),
+  exchangeController.cancelExchange,
 );
 
 export default router;
