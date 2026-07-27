@@ -20,46 +20,73 @@ import { createExchangeSchema } from "../exchange/exchange.validator.js";
 
 const router = express.Router();
 
-router.get("/", validate(getShopListingsSchema));
+router.get(
+  "/",
+  validate(getShopListingsSchema),
+  shopListingController.getShopListings,
+);
 
-router.get("/count");
+router.get("/count", shopListingController.getShopListingsAllforCount);
 
-router.get("/me", authMiddleware, validate(getShopListingsSchema));
+router.get(
+  "/me",
+  authMiddleware,
+  validate(getShopListingsSchema),
+  shopListingController.getMyShopListings,
+);
 
-router.get("/me/count", authMiddleware);
+router.get(
+  "/me/count",
+  authMiddleware,
+  shopListingController.getMyShopListingsAllforCount,
+);
 
-router.post("/", authMiddleware, validate(createShopListingSchema));
+router.post(
+  "/",
+  authMiddleware,
+  validate(createShopListingSchema),
+  shopListingController.createShopListing,
+);
 
-router.get("/:shopListingId", validate(getShopListingSchema));
+router.get(
+  "/:shopListingId",
+  validate(getShopListingSchema),
+  shopListingController.getShopListing,
+);
 
 router.patch(
   "/:shopListingId",
   authMiddleware,
   validate(updateShopListingSchema),
+  shopListingController.updateShopListing,
 );
 
 router.delete(
   "/:shopListingId",
   authMiddleware,
   validate(deleteShopListingSchema),
+  shopListingController.deleteShopListing,
 );
 
 router.post(
   "/:shopListingId/purchase",
   authMiddleware,
   validate(purchaseShopListingSchema),
+  shopListingController.purchaseShopListing,
 );
 
 router.post(
   "/:shopListingId/exchanges",
   authMiddleware,
   validate(createExchangeSchema),
+  exchangeController.createExchange,
 );
 
 router.get(
   "/:shopListingId/exchanges",
   authMiddleware,
   validate(getShopListingExchangesSchema),
+  shopListingController.getShopListingExchanges,
 );
 
 export default router;
