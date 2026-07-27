@@ -67,7 +67,7 @@ export async function getMe(userId) {
 export async function googleCallback(code) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = "http://localhost:3001/auth/google/callback";
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI;
 
   const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
@@ -82,14 +82,18 @@ export async function googleCallback(code) {
   });
   
   const tokenData = await tokenResponse.json();
-  if (!tokenResponse.ok) throw new AppError("구글 토큰 발급에 실패했습니다.", 500);
+  if (!tokenResponse.ok) {
+    throw new AppError("구글 토큰 발급에 실패했습니다.", 500, ERROR_CODE.INTERNAL_SERVER_ERROR);
+  }
 
   const userResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
     headers: { Authorization: `Bearer ${tokenData.access_token}` },
   });
   
   const userData = await userResponse.json();
-  if (!userResponse.ok) throw new AppError("구글 유저 정보 조회에 실패했습니다.", 500);
+  if (!userResponse.ok) {
+    throw new AppError("구글 유저 정보 조회에 실패했습니다.", 500, ERROR_CODE.INTERNAL_SERVER_ERROR);
+  }
 
   const { email, name } = userData;
 
