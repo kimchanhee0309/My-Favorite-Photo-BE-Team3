@@ -213,6 +213,14 @@ export async function acceptExchange(sellerId, exchangeId) {
       );
     }
 
+    if (shopListing.userId !== sellerId) {
+      throw new AppError(
+        "본인의 판매글에 대한 교환 제안만 승인할 수 있습니다.",
+        403,
+        ERROR_CODE.FORBIDDEN,
+      );
+    }
+
     const shopListing = exchange.shopListing;
 
     if (shopListing.status !== "ON_SALE" || shopListing.remainingQuantity < 1) {

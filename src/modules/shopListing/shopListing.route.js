@@ -20,76 +20,46 @@ import { createExchangeSchema } from "../exchange/exchange.validator.js";
 
 const router = express.Router();
 
-router.get(
-  "/",
-  validate(getShopListingsSchema),
-  asyncHandler(shopListingController.getShopListings),
-);
+router.get("/", validate(getShopListingsSchema));
 
-router.get(
-  "/count",
-  asyncHandler(shopListingController.getShopListingsAllforCount),
-);
+router.get("/count");
 
-router.get(
-  "/me",
-  authMiddleware,
-  validate(getShopListingsSchema),
-  asyncHandler(shopListingController.getMyShopListings),
-);
+router.get("/me", authMiddleware, validate(getShopListingsSchema));
 
-router.get(
-  "/me/count",
-  authMiddleware,
-  asyncHandler(shopListingController.getMyShopListingsAllforCount),
-);
+router.get("/me/count", authMiddleware);
 
-router.post(
-  "/",
-  authMiddleware,
-  validate(createShopListingSchema),
-  asyncHandler(shopListingController.createShopListing),
-);
+router.post("/", authMiddleware, validate(createShopListingSchema));
 
-router.get(
-  "/:shopListingId",
-  validate(getShopListingSchema),
-  asyncHandler(shopListingController.getShopListing),
-);
+router.get("/:shopListingId", validate(getShopListingSchema));
 
 router.patch(
   "/:shopListingId",
   authMiddleware,
   validate(updateShopListingSchema),
-  asyncHandler(shopListingController.updateShopListing),
 );
 
 router.delete(
   "/:shopListingId",
   authMiddleware,
   validate(deleteShopListingSchema),
-  asyncHandler(shopListingController.deleteShopListing),
 );
 
 router.post(
   "/:shopListingId/purchase",
   authMiddleware,
   validate(purchaseShopListingSchema),
-  asyncHandler(shopListingController.purchaseShopListing),
 );
 
 router.post(
   "/:shopListingId/exchanges",
   authMiddleware,
   validate(createExchangeSchema),
-  asyncHandler(exchangeController.createExchange),
 );
 
 router.get(
   "/:shopListingId/exchanges",
   authMiddleware,
   validate(getShopListingExchangesSchema),
-  asyncHandler(shopListingController.getShopListingExchanges),
 );
 
 export default router;

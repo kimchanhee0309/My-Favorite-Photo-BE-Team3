@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
-router.get("/me", asyncHandler(pointController.getPointsMe));
+router.get("/me");
 
-router.post("/random-box", asyncHandler(pointController.claimRandomBox));
+router.post("/random-box");
 
 export default router;
