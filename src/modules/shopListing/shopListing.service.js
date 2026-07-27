@@ -563,7 +563,7 @@ export async function purchaseShopListing(buyerId, shopListingId, quantity) {
       tx,
     );
 
-    await shopListingRepository.createNotification(
+    await notificationRepository.createNotification(
       {
         type: "PURCHASE_COMPLETED",
         userId: buyerId,
@@ -573,7 +573,7 @@ export async function purchaseShopListing(buyerId, shopListingId, quantity) {
       tx,
     );
 
-    await shopListingRepository.createNotification(
+    await notificationRepository.createNotification(
       {
         type: "CARD_SOLD",
         userId: shopListing.userId,
@@ -584,7 +584,7 @@ export async function purchaseShopListing(buyerId, shopListingId, quantity) {
     );
 
     if (nextRemainingQuantity === 0) {
-      await shopListingRepository.createNotification(
+      await notificationRepository.createNotification(
         {
           type: "CARD_SOLD_OUT",
           userId: shopListing.userId,

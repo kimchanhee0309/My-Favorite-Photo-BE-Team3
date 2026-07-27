@@ -2,7 +2,6 @@ import express from "express";
 
 import * as shopListingController from "./shopListing.controller.js";
 import * as exchangeController from "../exchange/exchange.controller.js";
-import { asyncHandler } from "../../common/utils/asyncHandler.js";
 import { authMiddleware } from "../../common/middleware/auth.middleware.js";
 import { validate } from "../../common/middleware/validate.middleware.js";
 

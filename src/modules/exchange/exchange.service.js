@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import * as exchangeRepository from "./exchange.repository.js";
+import * as notificationRepository from "../notification/notification.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
 
@@ -125,7 +126,7 @@ export async function createExchange(proposerId, shopListingId, data) {
     message: data.message,
   });
 
-  await exchangeRepository.createNotification({
+  await notificationRepository.createNotification({
     type: "EXCHANGE_RECEIVED",
     userId: shopListing.userId,
     targetId: exchange.id,
@@ -288,7 +289,7 @@ export async function acceptExchange(sellerId, exchangeId) {
       tx,
     );
 
-    await exchangeRepository.createNotification(
+    await notificationRepository.createNotification(
       {
         type: "EXCHANGE_ACCEPTED",
         userId: exchange.proposerId,
@@ -299,7 +300,7 @@ export async function acceptExchange(sellerId, exchangeId) {
     );
 
     if (nextRemainingQuantity === 0) {
-      await exchangeRepository.createNotification(
+      await notificationRepository.createNotification(
         {
           type: "CARD_SOLD_OUT",
           userId: sellerId,
@@ -345,7 +346,7 @@ export async function rejectExchange(sellerId, exchangeId) {
     status: "REJECTED",
   });
 
-  await exchangeRepository.createNotification({
+  await notificationRepository.createNotification({
     type: "EXCHANGE_REJECTED",
     userId: exchange.proposerId,
     targetId: exchange.id,
