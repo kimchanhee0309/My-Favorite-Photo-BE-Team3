@@ -12,10 +12,24 @@ import {
 
 const router = express.Router();
 
-router.post("/", authMiddleware, validate(createPhotocardSchema));
+router.post(
+  "/",
+  authMiddleware,
+  validate(createPhotocardSchema),
+  photocardController.createPhotocard,
+);
 
-router.get("/me", authMiddleware, validate(getMyPhotocardsSchema));
+router.get(
+  "/me",
+  authMiddleware,
+  validate(getMyPhotocardsSchema),
+  photocardController.getMyPhotocards,
+);
 
-router.get("/:photocardId", validate(getPhotocardSchema));
+router.get(
+  "/:photocardId",
+  validate(getPhotocardSchema),
+  photocardController.getPhotocard,
+);
 
 export default router;
