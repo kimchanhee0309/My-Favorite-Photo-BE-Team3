@@ -296,9 +296,9 @@ export async function getMyShopListings(userId, query) {
   const slicedItems = hasNextPage ? items.slice(0, limit) : items;
   const lastItem = slicedItems[slicedItems.length - 1];
 
-  const itemsWithSaleType = slicedItems.flatMap((item) =>
-    splitListingBySaleType(item),
-  );
+  const itemsWithSaleType = slicedItems
+    .flatMap((item) => splitListingBySaleType(item))
+    .filter((item) => !query.saleType || item.saleType === query.saleType);
 
   return {
     items: itemsWithSaleType,
