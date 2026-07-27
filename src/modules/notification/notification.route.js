@@ -15,18 +15,15 @@ router.use(authMiddleware);
 router.get(
   "/",
   validate(getNotificationSchema),
-  asyncHandler(notificationController.getNotifications),
+  notificationController.getNotifications,
 );
 
-router.patch(
-  "/read-all",
-  asyncHandler(notificationController.readAllNotifications),
-);
+router.patch("/read-all", notificationController.readAllNotifications);
 
 router.patch(
   "/:notificationId/read",
   validate(readNotificationSchema),
-  asyncHandler(notificationController.readNotification),
+  notificationController.readNotification,
 );
 
 export default router;
