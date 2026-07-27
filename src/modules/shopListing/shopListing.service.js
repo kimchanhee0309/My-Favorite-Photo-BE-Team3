@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import * as shopListingRepository from "./shopListing.repository.js";
+import * as notificationRepository from "../notification/notification.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
 
