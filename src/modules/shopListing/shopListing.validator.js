@@ -10,7 +10,7 @@ const cardGenreSchema = z.enum([
   "ETC",
 ]);
 
-const listingStatusSchema = z.enum(["ON_SALE", "SOLD_OUT", "CANCELLED"]);
+const listingStatusSchema = z.enum(["ON_SALE", "SOLD_OUT"]);
 
 export const getShopListingsSchema = z.object({
   query: z.object({
