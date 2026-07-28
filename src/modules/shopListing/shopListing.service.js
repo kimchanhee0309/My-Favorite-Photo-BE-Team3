@@ -25,7 +25,7 @@ function getInfiniteScrollLimit(query) {
 }
 
 function createShopListingWhere(query, userId) {
-  const where = {};
+  const where = { status: { not: "CANCELLED" } };
 
   if (userId) {
     where.userId = userId;
