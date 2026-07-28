@@ -192,9 +192,3 @@ export async function findShopListingExchanges(shopListingId, client = prisma) {
     },
   });
 }
-
-export async function createNotification(data, client = prisma) {
-  return client.notification.create({
-    data,
-  });
-}
