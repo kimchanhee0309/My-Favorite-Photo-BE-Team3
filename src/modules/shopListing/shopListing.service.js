@@ -3,6 +3,7 @@ import * as shopListingRepository from "./shopListing.repository.js";
 import * as notificationRepository from "../notification/notification.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
+import { formatCardLabel } from "../notification/notification.util.js";
 
 function encodeCursor(cursorData) {
   return Buffer.from(JSON.stringify(cursorData)).toString("base64");
@@ -568,7 +569,10 @@ export async function purchaseShopListing(buyerId, shopListingId, quantity) {
         type: "PURCHASE_COMPLETED",
         userId: buyerId,
         targetId: shopListingId,
-        message: `${shopListing.ownership.photocard.name} 구매가 완료되었습니다.`,
+        message: `${formatCardLabel(
+          shopListing.ownership.photocard.grade,
+          shopListing.ownership.photocard.name,
+        )} ${quantity}장을 성공적으로 구매했습니다.`,
       },
       tx,
     );
@@ -578,7 +582,10 @@ export async function purchaseShopListing(buyerId, shopListingId, quantity) {
         type: "CARD_SOLD",
         userId: shopListing.userId,
         targetId: shopListingId,
-        message: `${shopListing.ownership.photocard.name} 카드가 판매되었습니다`,
+        message: `${buyer.nickname}님이 ${formatCardLabel(
+          shopListing.ownership.photocard.grade,
+          shopListing.ownership.photocard.name,
+        )}을 ${quantity}장 구매했습니다.`,
       },
       tx,
     );
@@ -589,7 +596,10 @@ export async function purchaseShopListing(buyerId, shopListingId, quantity) {
           type: "CARD_SOLD_OUT",
           userId: shopListing.userId,
           targetId: shopListingId,
-          message: `${shopListing.ownership.photocard.name} 판매글이 품절되었습니다.`,
+          message: `${formatCardLabel(
+            shopListing.ownership.photocard.grade,
+            shopListing.ownership.photocard.name,
+          )}이 품절되었습니다.`,
         },
         tx,
       );
