@@ -130,7 +130,7 @@ export async function createExchange(proposerId, shopListingId, data) {
   await notificationRepository.createNotification({
     type: "EXCHANGE_RECEIVED",
     userId: shopListing.userId,
-    targetId: exchange.id,
+    targetId: shopListingId,
     message: `${proposerOwnership.user.nickname}님이 ${formatCardLabel(
       proposerOwnership.photocard.grade,
       proposerOwnership.photocard.name,
@@ -298,7 +298,7 @@ export async function acceptExchange(sellerId, exchangeId) {
       {
         type: "EXCHANGE_ACCEPTED",
         userId: exchange.proposerId,
-        targetId: exchange.id,
+        targetId: shopListing.id,
         message: `${shopListing.user.nickname}님과의 ${formatCardLabel(
           exchange.photocard.grade,
           exchange.photocard.name,
@@ -360,7 +360,7 @@ export async function rejectExchange(sellerId, exchangeId) {
   await notificationRepository.createNotification({
     type: "EXCHANGE_REJECTED",
     userId: exchange.proposerId,
-    targetId: exchange.id,
+    targetId: shopListing.id,
     message: `${exchange.shopListing.user.nickname}님이 ${formatCardLabel(
       exchange.photocard.grade,
       exchange.photocard.name,
