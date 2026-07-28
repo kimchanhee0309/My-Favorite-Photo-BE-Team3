@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import * as authRepository from "./auth.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
@@ -61,4 +62,61 @@ export async function getMe(userId) {
   const { password: _, ...userWithoutPassword } = user;
   
   return userWithoutPassword;
+}
+
+export async function googleCallback(code) {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      code,
+      grant_type: "authorization_code",
+      redirect_uri: redirectUri,
+    }),
+  });
+  
+  const tokenData = await tokenResponse.json();
+  if (!tokenResponse.ok) {
+    throw new AppError("구글 토큰 발급에 실패했습니다.", 500, ERROR_CODE.INTERNAL_SERVER_ERROR);
+  }
+
+  const userResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+    headers: { Authorization: `Bearer ${tokenData.access_token}` },
+  });
+  
+  const userData = await userResponse.json();
+  if (!userResponse.ok) {
+    throw new AppError("구글 유저 정보 조회에 실패했습니다.", 500, ERROR_CODE.INTERNAL_SERVER_ERROR);
+  }
+
+  const { email, name } = userData;
+
+  let user = await authRepository.findUserByEmail(email);
+
+  if (!user) {
+    const randomPassword = crypto.randomBytes(16).toString("hex");
+    const hashedDummyPassword = await bcrypt.hash(randomPassword, 10);
+    
+    user = await authRepository.createUser({
+      email,
+      nickname: name || "구글유저",
+      password: hashedDummyPassword,
+    });
+  }
+
+  const token = signAccessToken({
+    id: user.id,
+    email: user.email,
+    nickname: user.nickname,
+  });
+
+  const { password: _, ...userWithoutPassword } = user;
+  
+  return { user: userWithoutPassword, token };
 }
