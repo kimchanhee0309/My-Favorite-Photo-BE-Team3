@@ -197,6 +197,7 @@ export async function getReceivedExchanges(userId, query) {
 export async function acceptExchange(sellerId, exchangeId) {
   return prisma.$transaction(async (tx) => {
     const exchange = await exchangeRepository.findExchangeById(exchangeId, tx);
+    const shopListing = exchange.shopListing;
 
     if (!exchange) {
       throw new AppError(
@@ -221,8 +222,6 @@ export async function acceptExchange(sellerId, exchangeId) {
         ERROR_CODE.FORBIDDEN,
       );
     }
-
-    const shopListing = exchange.shopListing;
 
     if (shopListing.status !== "ON_SALE" || shopListing.remainingQuantity < 1) {
       throw new AppError(
@@ -249,6 +248,7 @@ export async function acceptExchange(sellerId, exchangeId) {
 
     await exchangeRepository.decreaseOwnershipQuantity(
       proposerOwnership.id,
+      1,
       tx,
     );
 

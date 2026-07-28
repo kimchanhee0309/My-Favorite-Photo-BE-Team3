@@ -198,3 +198,28 @@ export async function createNotification(data, client = prisma) {
     data,
   });
 }
+
+export async function findMyShopListingExchanges(
+  userId,
+  shopListingId,
+  client = prisma,
+) {
+  return client.exchange.findMany({
+    where: {
+      shopListingId,
+      proposerId: userId,
+    },
+    include: {
+      proposer: {
+        select: {
+          id: true,
+          nickname: true,
+        },
+      },
+      photocard: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
