@@ -201,6 +201,7 @@ export async function getReceivedExchanges(userId, query) {
 export async function acceptExchange(sellerId, exchangeId) {
   return prisma.$transaction(async (tx) => {
     const exchange = await exchangeRepository.findExchangeById(exchangeId, tx);
+    const shopListing = exchange.shopListing;
 
     if (!exchange) {
       throw new AppError(
