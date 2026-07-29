@@ -201,7 +201,6 @@ export async function getReceivedExchanges(userId, query) {
 export async function acceptExchange(sellerId, exchangeId) {
   return prisma.$transaction(async (tx) => {
     const exchange = await exchangeRepository.findExchangeById(exchangeId, tx);
-    const shopListing = exchange.shopListing;
 
     if (!exchange) {
       throw new AppError(
@@ -361,7 +360,7 @@ export async function rejectExchange(sellerId, exchangeId) {
   await notificationRepository.createNotification({
     type: "EXCHANGE_REJECTED",
     userId: exchange.proposerId,
-    targetId: shopListing.id,
+    targetId: exchange.shopListing.id,
     message: `${exchange.shopListing.user.nickname}님이 ${formatCardLabel(
       exchange.photocard.grade,
       exchange.photocard.name,
