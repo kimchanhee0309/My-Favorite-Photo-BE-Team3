@@ -58,7 +58,7 @@ enum NotiType {
 model User {
   id               String    @id @default(uuid())
   email            String    @unique @db.VarChar(255)
-  nickname         String    @db.VarChar(255)
+  nickname         String    @unique @db.VarChar(255)
   password         String    @db.VarChar(255)
   points           Int       @default(0) // 포인트 잔액
   lastBoxClaimedAt DateTime? // 랜덤박스 쿨다운 체크용, 첫 가입자에게 바로 포인트 지급 위해
@@ -128,11 +128,10 @@ model ShopListing {
 }
 
 model Exchange {
-  id              String         @id @default(uuid())
-  offeredQuantity Int            @default(1) // 교환 제안 수량
-  status          ExchangeStatus @default(PENDING)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id        String         @id @default(uuid())
+  status    ExchangeStatus @default(PENDING)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 
   shopListingId String
   shopListing   ShopListing @relation(fields: [shopListingId], references: [id]) // 교환 대상 리스팅
@@ -142,6 +141,8 @@ model Exchange {
 
   photocardId String
   photocard   Photocard @relation(fields: [photocardId], references: [id]) // 제시된 카드종류
+
+  message String?
 }
 
 model Notification {
