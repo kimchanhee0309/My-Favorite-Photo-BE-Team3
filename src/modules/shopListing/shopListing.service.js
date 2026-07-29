@@ -611,16 +611,14 @@ export async function getShopListingExchanges(userId, shopListingId) {
     );
   }
 
-  if (shopListing.userId !== userId) {
-    throw new AppError(
-      "본인의 판매글에 들어온 교환 제안만 조회할 수 있습니다.",
-      403,
-      ERROR_CODE.FORBIDDEN,
-    );
-  }
+  const isSeller = shopListing.userId === userId;
 
-  const items =
-    await shopListingRepository.findShopListingExchanges(shopListingId);
+  const items = isSeller
+    ? await shopListingRepository.findShopListingExchanges(shopListingId)
+    : await shopListingRepository.findMyShopListingExchanges(
+        userId,
+        shopListingId,
+      );
 
   return { items };
 }
