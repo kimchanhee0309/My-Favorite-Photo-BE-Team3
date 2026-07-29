@@ -8,7 +8,8 @@ import { notFoundMiddleware } from "./common/middleware/notFound.middleware.js";
 import { errorMiddleware } from "./common/middleware/error.middleware.js";
 import { swaggerServe, swaggerSetup } from "./config/swagger.js";
 
-dotenv.config();
+const envFile = `.env.${process.env.NODE_ENV || "development"}`;
+dotenv.config({ path: envFile });
 
 const app = express();
 const PORT = process.env.PORT;
