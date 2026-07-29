@@ -3,6 +3,7 @@ import * as exchangeRepository from "./exchange.repository.js";
 import * as notificationRepository from "../notification/notification.repository.js";
 import { AppError } from "../../common/errors/AppError.js";
 import { ERROR_CODE } from "../../common/errors/errorCode.js";
+import { formatCardLabel } from "../notification/notification.util.js";
 
 function encodeCursor(cursorData) {
   return Buffer.from(JSON.stringify(cursorData)).toString("base64");
@@ -129,8 +130,11 @@ export async function createExchange(proposerId, shopListingId, data) {
   await notificationRepository.createNotification({
     type: "EXCHANGE_RECEIVED",
     userId: shopListing.userId,
-    targetId: exchange.id,
-    message: `${proposerOwnership.photocard.name} 카드로 교환 제안이 도착했습니다.`,
+    targetId: shopListingId,
+    message: `${proposerOwnership.user.nickname}님이 ${formatCardLabel(
+      proposerOwnership.photocard.grade,
+      proposerOwnership.photocard.name,
+    )}의 포토카드 교환을 제안했습니다.`,
   });
 
   return exchange;
@@ -215,6 +219,8 @@ export async function acceptExchange(sellerId, exchangeId) {
       );
     }
 
+    const shopListing = exchange.shopListing;
+
     if (shopListing.userId !== sellerId) {
       throw new AppError(
         "본인의 판매글에 대한 교환 제안만 승인할 수 있습니다.",
@@ -293,8 +299,11 @@ export async function acceptExchange(sellerId, exchangeId) {
       {
         type: "EXCHANGE_ACCEPTED",
         userId: exchange.proposerId,
-        targetId: exchange.id,
-        message: `${shopListing.ownership.photocard.name} 교환 제안이 승인되었습니다.`,
+        targetId: shopListing.id,
+        message: `${shopListing.user.nickname}님과의 ${formatCardLabel(
+          exchange.photocard.grade,
+          exchange.photocard.name,
+        )}의 포토카드 교환이 성사되었습니다.`,
       },
       tx,
     );
@@ -305,7 +314,10 @@ export async function acceptExchange(sellerId, exchangeId) {
           type: "CARD_SOLD_OUT",
           userId: sellerId,
           targetId: shopListing.id,
-          message: `${shopListing.ownership.photocard.name} 판매글이 품절되었습니다.`,
+          message: `${formatCardLabel(
+            shopListing.ownership.photocard.grade,
+            shopListing.ownership.photocard.name,
+          )}이 품절되었습니다.`,
         },
         tx,
       );
@@ -349,8 +361,11 @@ export async function rejectExchange(sellerId, exchangeId) {
   await notificationRepository.createNotification({
     type: "EXCHANGE_REJECTED",
     userId: exchange.proposerId,
-    targetId: exchange.id,
-    message: `${exchange.shopListing.ownership.photocard.name} 교환 제안이 거절되었습니다.`,
+    targetId: shopListing.id,
+    message: `${exchange.shopListing.user.nickname}님이 ${formatCardLabel(
+      exchange.photocard.grade,
+      exchange.photocard.name,
+    )}의 포토카드 교환을 거절했습니다.`,
   });
 
   return updatedExchange;

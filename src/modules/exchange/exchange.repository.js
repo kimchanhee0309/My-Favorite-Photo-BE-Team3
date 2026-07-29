@@ -53,6 +53,9 @@ export async function findOwnershipByUserAndPhotocard(
     },
     include: {
       photocard: true,
+      user: {
+        select: { nickname: true },
+      },
     },
   });
 }
@@ -153,11 +156,5 @@ export async function updateShopListing(shopListingId, data, client = prisma) {
         },
       },
     },
-  });
-}
-
-export async function createNotification(data, client = prisma) {
-  return client.notification.create({
-    data,
   });
 }
