@@ -18,3 +18,9 @@ export async function getPhotocard(req, res) {
 
   return successResponse(res, result, "포토카드 상세 조회 성공");
 }
+
+export async function getMyCreateCount(req, res) {
+  const result = await photocardService.getMyCreateCount(req.user.id);
+
+  return successResponse(res, result, "포토카드 생성 수량 조회 성공");
+}

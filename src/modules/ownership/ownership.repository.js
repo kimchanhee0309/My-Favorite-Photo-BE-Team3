@@ -27,7 +27,14 @@ export async function findMyOwnerships(
     },
     orderBy,
     take,
-    include: includePhotocard,
+    include: {
+      ...includePhotocard,
+      user: {
+        select: {
+          nickname: true,
+        },
+      },
+    },
   });
 }
 
