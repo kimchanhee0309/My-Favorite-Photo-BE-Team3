@@ -15,7 +15,7 @@ export async function login(req, res) {
   res.cookie("accessToken", token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "strict",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -51,10 +51,10 @@ export function googleLogin(req, res) {
 export async function googleCallback(req, res) {
   const { code, error } = req.query;
 
+  const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+
   if (error || !code) {
-    return res.redirect(
-      "https://my-favorite-photo-fe-team3-silk.vercel.app/login?error=google_cancelled",
-    );
+    return res.redirect(`${clientUrl}/login?error=google_cancelled`);
   }
 
   const { token } = await authService.googleCallback(code);
@@ -64,9 +64,9 @@ export async function googleCallback(req, res) {
   res.cookie("accessToken", token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "strict",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.redirect("https://my-favorite-photo-fe-team3-silk.vercel.app/");
+  res.redirect(`${clientUrl}/marketplace`);
 }
