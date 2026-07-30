@@ -44,15 +44,17 @@ export function googleLogin(req, res) {
   const redirectUri = process.env.GOOGLE_REDIRECT_URI;
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email profile&prompt=select_account`;
-  
+
   res.redirect(url);
 }
 
 export async function googleCallback(req, res) {
   const { code, error } = req.query;
-  
+
   if (error || !code) {
-    return res.redirect("http://localhost:3000/login?error=google_cancelled");
+    return res.redirect(
+      "https://my-favorite-photo-fe-team3-silk.vercel.app/login?error=google_cancelled",
+    );
   }
 
   const { token } = await authService.googleCallback(code);
@@ -66,5 +68,5 @@ export async function googleCallback(req, res) {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.redirect("http://localhost:3000/"); 
+  res.redirect("https://my-favorite-photo-fe-team3-silk.vercel.app/");
 }
