@@ -131,6 +131,21 @@ export async function getMyPhotocards(userId, query) {
   };
 }
 
+export async function getMyCreateCount(userId) {
+  const count = await photocardRepository.countCreatedThisMonth(
+    userId,
+    getStartOfThisMonth(),
+  );
+  const limit = MONTHLY_CREATE_LIMIT;
+  const remaining = Math.max(0, limit - count);
+
+  return {
+    count,
+    limit,
+    remaining,
+  };
+}
+
 export async function getPhotocard(photocardId) {
   const photocard = await photocardRepository.findPhotocardById(photocardId);
 

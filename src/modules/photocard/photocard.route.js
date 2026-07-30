@@ -26,6 +26,12 @@ router.get(
 );
 
 router.get(
+  "/me/createCount",
+  authMiddleware,
+  photocardController.getMyCreateCount,
+);
+
+router.get(
   "/:photocardId",
   validate(getPhotocardSchema),
   photocardController.getPhotocard,
