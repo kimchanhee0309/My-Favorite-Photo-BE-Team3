@@ -61,6 +61,8 @@ export async function googleCallback(req, res) {
 
   const isProduction = process.env.NODE_ENV === "production";
 
+  NODE_ENV = production;
+
   res.cookie("accessToken", token, {
     httpOnly: true,
     secure: isProduction,
