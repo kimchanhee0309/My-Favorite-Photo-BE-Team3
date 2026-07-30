@@ -312,6 +312,7 @@ export async function acceptExchange(sellerId, exchangeId) {
         {
           type: "CARD_SOLD_OUT",
           userId: sellerId,
+          targetId: shopListing.id,
           message: `${formatCardLabel(
             shopListing.ownership.photocard.grade,
             shopListing.ownership.photocard.name,
